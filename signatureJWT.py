@@ -4,23 +4,24 @@ from cryptography.hazmat.primitives import hashes
 import json
 import base64
 
-def existsABaseValue( firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber):
-    e = 3
-    while( e < 65537 and not is_AValidBase( gdmExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber) ) ):
-        e = e + 1
-    return is_AValidBase( gdmExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber) )
+#def existsABaseValue( firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber):
+#    e = 3
+#    while( e < 65537 and not is_AValidBase( gcdExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber) ) ):
+#        e = e + 1
+#    return is_AValidBase( gcdExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber) )
 
 def findTheBasesValues( firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber ):
+    publicPairList = []
     e = 3
-    while( e < 65537 and not is_AValidBase( gdmExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber) ) ):
-        e = e + 1
-        gdmExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber)
+    for e in range(3, 65537):
+        publicPairList.append(gcdExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber)) if is_AValidBase( *gcdExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber), firstMessageNumber, firstSignatureNumber ) else None
+    return publicPairList
 
-def is_AValidBase( number ):
-    return False
+def is_AValidBase( gcd, e, firstMessageNumber, firstSignatureNumber ):
+    return pow(firstSignatureNumber, e) % gcd == firstMessageNumber % gcd
 
-def gdmExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber):
-    return gdm( pow( firstSignatureNumber, e ) - firstMessageNumber, pow( secondSignatureNumber, e ) - secondMessageNumber )
+def gcdExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber):
+    return (gcd( pow( firstSignatureNumber, e ) - firstMessageNumber, pow( secondSignatureNumber, e ) - secondMessageNumber ), e)
 
 def generateSignature(secret, headerAndPayload):
     h = hmac.HMAC( secret.encode(), hashes.SHA256())
