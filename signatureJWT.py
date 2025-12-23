@@ -3,8 +3,8 @@ from cryptography.hazmat.primitives import hmac
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization
+from Crypto.Signature import pkcs1_15
 import base64
 
 
@@ -25,21 +25,27 @@ def ExportRSAPublicKeysWith_And_(n, e):
         file.write(rsa.RSAPublicNumbers(n=n, e=e).public_key(default_backend()).public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo))
 
 def numbersOfMessageAndSignatureFromJWT_( jwtParts ):
-    message = int.from_bytes( padding.PKCS1v15(hashes.SHA256(f'{jwtParts[0]}.{jwtParts[1]}'.encode('utf-8'))), 'big' )
-    signature = int.from_bytes( base64.urlsafe_b64decode(jwtParts[2] + '=' * (len(jwtParts[2]) % 4)) ) # b64 strings must have a 4 multiple length
+    message = int.from_bytes( pkcs1_15._EMSA_PKCS1_V1_5_ENCODE( hashes.Hash(hashes.SHA256()).update( f'{jwtParts[0]}.{jwtParts[1]}'.encode('ascii') ) ), 'big' ) # adds the neccessary padding
+    signature = int.from_bytes( base64.urlsafe_b64decode(jwtParts[2] + '=' * (len(jwtParts[2]) % 4)), 'big' ) # b64 strings must have a 4 multiple length
     return (message, signature)
 
 def findThePublicPairValues( firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber ):
     publicPairList = []
     for e in [3, 65537]:
-        publicPairList.append(gcdExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber)) if is_AValidBase( *gcdExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber), firstMessageNumber, firstSignatureNumber ) else None
+        publicPairList = publicPairList + publicPairListFor_Exponent_And_NumbersWith_And_NumbersFor_GCD(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber, gcdExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber))
     return publicPairList
+
+def publicPairListFor_Exponent_And_NumbersWith_And_NumbersFor_GCD(e, firstMessage, firstSignature, secondMessage, secondSignature, gcd):
+    n_values = []
+    for number in range(1,100):
+        n_values.append( gcd // number ) if is_AValidBase( gcd // number, e, firstMessage, firstSignature ) else None
+    return n_values
 
 def is_AValidBase( gcd, e, firstMessageNumber, firstSignatureNumber ):
     return pow(firstSignatureNumber, e) % gcd == firstMessageNumber and e % 2 != 0
 
 def gcdExponent_Between_With_And_With_(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber):
-    return (gcd( pow( firstSignatureNumber, e ) - firstMessageNumber, pow( secondSignatureNumber, e ) - secondMessageNumber ), e)
+    return gcd( pow( firstSignatureNumber, e ) - firstMessageNumber, pow( secondSignatureNumber, e ) - secondMessageNumber )
 
 ################################################################################################################################################################
 
