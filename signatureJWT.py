@@ -48,7 +48,7 @@ def findThePublicPairValues( firstMessageNumber, firstSignatureNumber, secondMes
     info.status("finding public key pair values...")
     publicPairList = []
     for e in [3, 65537]:
-        publicPairList = publicPairList + publicPairListFor_Exponent_And_NumbersWith_And_NumbersFor_GCD(e, firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber, gcdExponent_Between_With_And_With_(mpz(e), firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber))
+        publicPairList = publicPairList + publicPairListFor_Exponent_And_NumbersWith_And_NumbersFor_GCD(mpz(e), firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber, gcdExponent_Between_With_And_With_(mpz(e), firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber))
         counter.status(len(publicPairList))
     return publicPairList
 
@@ -59,7 +59,7 @@ def publicPairListFor_Exponent_And_NumbersWith_And_NumbersFor_GCD(e, firstMessag
     for number in range(1,100):
         type(number)
         info.status(f"finding public key pair values for exponent {e} and divisor {number}...")
-        n_values.append( c_div(gcd, mpz(int(number))) ) if is_AValidBase( c_div(gcd, mpz(number)), e, firstMessage, firstSignature ) else None
+        n_values.append( (c_div( gcd[0], mpz(number) ), e) ) if is_AValidBase( c_div(gcd[0], mpz(number) ), e, firstMessage, firstSignature ) else None
     return n_values
 
 def is_AValidBase( n, e, firstMessageNumber, firstSignatureNumber ):
