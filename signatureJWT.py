@@ -6,6 +6,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from Crypto.Signature import pkcs1_15
 import base64
+import sys
 
 
 #def existsABaseValue( firstMessageNumber, firstSignatureNumber, secondMessageNumber, secondSignatureNumber):
@@ -58,5 +59,6 @@ def signJWT(secret, jwt):
     splitedJWT = jwt.split('.')
     splitedJWT[2] = generateSignature(secret, f'{splitedJWT[0]}.{splitedJWT[1]}').decode()
     return '.'.join(splitedJWT)
-
-GeneratePublicKeysFromJWT_And_('eyJraWQiOiI5NjM3MjIxOS05ZDRiLTQ1NTEtYjgzMC04MGU5ZWE0MGIzYWIiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTc2NjQ0MjU4Niwic3ViIjoid2llbmVyIn0.V6UrUwZyHfyRyYNvkOvm-H4TgJ339Sk4unXVxsgYIdA5Ty7sBGw1geXxUzhcqhfs29J3OIxNf7gWBzAvfaT4f1O2b-VYPdansJQRXhs5STKlBm-3aFrtG9MYofEDYVNeDW2Z34JcQ1aUGcN7MQYyEm5j2qAKmLDEnkY6pFGOg3ifWW-jAFNFkk9UkiC5t9NGSzA_IFcnXCR4U9WyRTPV_GUjLR1TQBYtWxItuQUunYMeYi_CXFGzF1sbeYlnXZ_-j8i0TYtk3vt2LLbAfBWitWseVesFtdNgTnE-9U8L-UMeYNdJtFhqYaHGjuDbqXavhNoG6XiYDHkwKYTlkrw4Bg', 'eyJraWQiOiI5NjM3MjIxOS05ZDRiLTQ1NTEtYjgzMC04MGU5ZWE0MGIzYWIiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTc2NjQ0MjY4Nywic3ViIjoid2llbmVyIn0.UCO1szYTU_MiKwNVvX_rPyBVOBoXkb4TMiWYyt-6KOyKgokHfpk4dVJigeoMJyiRc2GRKxrUCEFoMrrbSTWQWdmrQy2XiCsc8oM2LYplskiBKko0ErcXiz5GTzSmbn8ORSKoZuNSMD-gkNhy-lUT6MNx_ScDpEpSou3yV79pv5TrTxnfNirJ8xENAK0-l-UaPD26viAD24VJRcQlOQ1LGBB740aQFVjKnskumwgsM_UFZriJdd6fp-oE59EjH0mbNGDBEmsKs6DWX8cLzJGPPNsbRvuFBhgixsdjRi5eayWNdCYM6VMAhnsb4cEDPNoFz2SajTI2bfp4ajjx0Oe2OA')
+print(__name__)
+#if __name__ == '__main__':
+#    GeneratePublicKeysFromJWT_And_(sys.argv[1], sys.argv[2])
