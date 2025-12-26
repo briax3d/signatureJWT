@@ -9,6 +9,7 @@ from gmpy2 import gcd, mpz, c_div, powmod
 from pwn import log
 import base64
 import sys
+import time
 
 info, counter = (None, None)
 
@@ -31,9 +32,9 @@ def GeneratePublicKeysFromJWT_And_(firstJWT, secondJWT):
 def ExportRSAPublicKeysWith_And_(n, e):
     global info
     info.status("exporting rsa public keys...")
-    with open(f'PKCS1_{e}.pem', 'wb') as file:
+    with open(f'PKCS1_{e}_{time.time()}.pem', 'wb') as file:
         file.write(rsa.RSAPublicNumbers(n=int(n), e=int(e)).public_key(default_backend()).public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.PKCS1))
-    with open(f'X509_{e}.pem', 'wb') as file:
+    with open(f'X509_{e}_{time.time()}.pem', 'wb') as file:
         file.write(rsa.RSAPublicNumbers(n=int(n), e=int(e)).public_key(default_backend()).public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo))
 
 def numbersOfMessageAndSignatureFromJWT_( jwtParts ):
