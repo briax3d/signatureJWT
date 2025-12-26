@@ -83,6 +83,7 @@ def signJWT(secret, jwt):
 
 def CreatePublicKeysGenerateProgressBars():
     global info, counter
+    print()
     info = log.progress('status')
     counter = log.progress("n values counter")
     info.status('...')
